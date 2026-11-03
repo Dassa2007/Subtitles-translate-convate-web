@@ -8,8 +8,8 @@
 
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<!-- ලස්සන Sinhala සහ English Bold Fonts -->
-<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Sinhala:wght@400;500;600;700;800&family=Outfit:wght@400;500;600;700;800;900&family=Space+Grotesk:wght@500;600;700&family=Syne:wght@700;800&display=swap" rel="stylesheet">
+<!-- අලුත් සිංහල ෆොන්ට් සමඟ -->
+<link href="https://fonts.googleapis.com/css2?family=Abhaya+Libre:wght@400;500;600;700;800&family=Maname&family=Noto+Serif+Sinhala:wght@400;500;600;700;800;900&family=Noto+Sans+Sinhala:wght@400;500;600;700;800&family=Outfit:wght@400;500;600;700;800;900&family=Space+Grotesk:wght@500;600;700&family=Syne:wght@700;800&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
 
@@ -78,7 +78,7 @@ body::before{
         radial-gradient(circle at 90% 20%, rgba(200,0,180,0.08) 0%, transparent 40%);
 }
 
-/* ============ LOADER ============ */
+/* ============ NEW LOADER ============ */
 .loader-screen{
     position:fixed;
     inset:0;
@@ -88,42 +88,73 @@ body::before{
     flex-direction:column;
     align-items:center;
     justify-content:center;
-    gap:24px;
-    transition:opacity .5s ease, visibility .5s ease;
+    gap:30px;
+    transition:opacity .6s ease, visibility .6s ease;
 }
 .loader-screen.hidden{ opacity:0; visibility:hidden; pointer-events:none; }
 
-.loader-logo{
-    width:80px; height:80px;
-    border-radius:24px;
-    background:var(--grad-rgb);
-    display:flex; align-items:center; justify-content:center;
-    color:#fff; font-family:'Syne',sans-serif; font-size:28px; font-weight:800;
-    box-shadow:0 0 40px rgba(0,240,255,0.4);
-    animation:logoIn .8s cubic-bezier(0.34,1.56,0.64,1) both, logoPulse 1.5s ease-in-out .8s infinite;
+/* Circular orbit loader */
+.loader-circle{
+    position:relative;
+    width:90px;
+    height:90px;
 }
-@keyframes logoIn{ from{ opacity:0; transform:scale(.5) rotate(-90deg); } to{ opacity:1; transform:scale(1) rotate(0); } }
-@keyframes logoPulse{ 0%,100%{ transform:scale(1); } 50%{ transform:scale(1.08); } }
+.loader-circle::before, .loader-circle::after{
+    content:"";
+    position:absolute;
+    inset:0;
+    border-radius:50%;
+    border:3px solid transparent;
+}
+.loader-circle::before{
+    border-top-color:#00f0ff;
+    border-bottom-color:#ff00e5;
+    animation:spin 1.2s cubic-bezier(0.68, -0.55, 0.265, 1.55) infinite;
+}
+.loader-circle::after{
+    border-left-color:#00ff88;
+    border-right-color:#ffee00;
+    animation:spinReverse 1.2s cubic-bezier(0.68, -0.55, 0.265, 1.55) infinite;
+}
+@keyframes spin{ 100%{ transform:rotate(360deg); } }
+@keyframes spinReverse{ 100%{ transform:rotate(-360deg); } }
 
-.loader-brand{
-    font-family:'Syne',sans-serif; font-size:clamp(28px, 8vw, 42px); font-weight:800;
-    letter-spacing:-1px; display:flex; gap:1px;
+.loader-logo-text{
+    position:absolute;
+    inset:0;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    font-family:'Syne',sans-serif;
+    font-size:24px;
+    font-weight:800;
+    color:#fff;
+    text-shadow:0 0 10px rgba(255,255,255,0.5);
+    animation:pulseText 1.5s ease-in-out infinite;
 }
-.loader-brand span{
-    display:inline-block; opacity:0; transform:translateY(15px);
-    animation:letterIn .5s cubic-bezier(0.34,1.56,0.64,1) forwards;
-}
-.loader-brand span:nth-child(1){ color:#00f0ff; animation-delay:.3s; }
-.loader-brand span:nth-child(2){ color:#ff00e5; animation-delay:.38s; }
-.loader-brand span:nth-child(3){ color:#ffee00; animation-delay:.46s; }
-.loader-brand span:nth-child(4){ color:#00ff88; animation-delay:.54s; }
-.loader-brand span:nth-child(5){ color:#00f0ff; animation-delay:.62s; }
-.loader-brand span:nth-child(6){ color:#ff00e5; animation-delay:.70s; }
-@keyframes letterIn{ to{ opacity:1; transform:translateY(0); } }
+@keyframes pulseText{ 0%,100%{ transform:scale(1); } 50%{ transform:scale(1.1); } }
 
-.loader-line{ width:180px; height:3px; background:rgba(148,163,184,.2); border-radius:99px; overflow:hidden; margin-top:10px; }
-.loader-fill{ height:100%; width:0; background:var(--grad-gold); border-radius:99px; animation:fillBar 1.5s ease .8s forwards; }
-@keyframes fillBar{ to{ width:100%; } }
+.loader-brand-text{
+    font-family:'Syne',sans-serif;
+    font-size:clamp(24px, 6vw, 32px);
+    font-weight:800;
+    letter-spacing:2px;
+    color:var(--text);
+    display:flex;
+    gap:2px;
+}
+.loader-brand-text span{
+    opacity:0;
+    transform:translateY(10px);
+    animation:fadeUpText .4s ease forwards;
+}
+.loader-brand-text span:nth-child(1){ animation-delay:.1s; color:#00f0ff; }
+.loader-brand-text span:nth-child(2){ animation-delay:.2s; color:#ff00e5; }
+.loader-brand-text span:nth-child(3){ animation-delay:.3s; color:#ffee00; }
+.loader-brand-text span:nth-child(4){ animation-delay:.4s; color:#00ff88; }
+.loader-brand-text span:nth-child(5){ animation-delay:.5s; color:#00f0ff; }
+.loader-brand-text span:nth-child(6){ animation-delay:.6s; color:#ff00e5; }
+@keyframes fadeUpText{ to{ opacity:1; transform:translateY(0); } }
 
 /* ============ BOTTOM NAV ============ */
 .bottom-nav{
@@ -191,10 +222,12 @@ main{ width:100%; max-width:1040px; display:flex; flex-direction:column; align-i
     display:inline-flex; align-items:center; gap:10px; padding:10px 20px;
     background:var(--card); border:1px solid var(--card-border); border-radius:999px;
     font-family:'Space Grotesk',sans-serif; font-size:13px; font-weight:700; color:var(--text-muted);
+    flex-wrap:wrap; justify-content:center; text-align:center;
 }
 .hero-url-badge i{ color:#00ff88; animation:pulseDot 1.5s infinite; }
 @keyframes pulseDot{ 0%,100%{ transform:scale(1); opacity:1; } 50%{ transform:scale(1.2); opacity:0.7; } }
 .hero-url-badge b{ color:var(--text); }
+.hero-url-badge span{ color:#00f0ff; }
 
 .hero-sub{ font-size:15px; line-height:1.8; color:var(--text-muted); max-width:650px; font-weight:500; }
 .hero-sub b{ color:var(--text); font-weight:700; }
@@ -327,7 +360,7 @@ input[type="color"]::-webkit-color-swatch{ border:2px solid rgba(255,255,255,0.2
     text-shadow:-1px -1px 0 rgba(0,0,0,.9), 1px -1px 0 rgba(0,0,0,.9), -1px 1px 0 rgba(0,0,0,.9), 1px 1px 0 rgba(0,0,0,.9), 0 2px 10px rgba(0,0,0,.8);
     transition:all .25s ease;
 }
-.preview-subtitle small{ display:block; margin-top:6px; font-size:0.85em; opacity:0.95; }
+.preview-subtitle small{ display:block; margin-top:8px; font-size:1.1em; opacity:0.95; }
 
 /* ============ BUTTONS ============ */
 button.convert-btn{
@@ -445,13 +478,14 @@ button.download-btn:hover{ transform:translateY(-3px); box-shadow:0 12px 30px rg
 
 <body data-theme="dark">
 
-<!-- LOADER -->
+<!-- NEW LOADER -->
 <div class="loader-screen" id="loaderScreen">
-    <div class="loader-logo">DG</div>
-    <div class="loader-brand">
+    <div class="loader-circle">
+        <div class="loader-logo-text">DG</div>
+    </div>
+    <div class="loader-brand-text">
         <span>D</span><span>G</span><span>S</span><span>U</span><span>B</span><span>Z</span>
     </div>
-    <div class="loader-line"><div class="loader-fill"></div></div>
 </div>
 
 <!-- THEME TOGGLE -->
@@ -473,8 +507,8 @@ button.download-btn:hover{ transform:translateY(-3px); box-shadow:0 12px 30px rg
 
             <div class="hero-url-badge">
                 <i class="fa-solid fa-circle-check"></i>
-                <b>dgsubz.vercel.app</b>
-                <span>Sinhala Subtitles</span>
+                <b>dgsubzlk.vercel.app</b>
+                <span>| dgsubz.netlify.app</span>
             </div>
 
             <p class="hero-sub">
@@ -517,7 +551,6 @@ button.download-btn:hover{ transform:translateY(-3px); box-shadow:0 12px 30px rg
         <div class="container">
             <h2 class="section-title">Advanced Translator & Styler</h2>
 
-            <!-- Settings Panel -->
             <div class="settings-panel">
                 <div class="form-group">
                     <label><i class="fa-solid fa-globe"></i> Target Language</label>
@@ -535,15 +568,21 @@ button.download-btn:hover{ transform:translateY(-3px); box-shadow:0 12px 30px rg
                     <label><i class="fa-solid fa-font"></i> Subtitle Styling</label>
                     <div class="style-grid">
                         <select id="fontName" title="Font family">
-                            <option value="Noto Sans Sinhala">Noto Sans Sinhala</option>
-                            <option value="Outfit">Outfit (English)</option>
-                            <option value="Arial">Arial</option>
-                            <option value="Space Grotesk">Space Grotesk</option>
-                            <option value="Verdana">Verdana</option>
-                            <option value="Tahoma">Tahoma</option>
-                            <option value="Georgia">Georgia</option>
-                            <option value="Times New Roman">Times New Roman</option>
-                            <option value="Roboto">Roboto</option>
+                            <optgroup label="Sinhala Fonts">
+                                <option value="Noto Sans Sinhala">Noto Sans Sinhala</option>
+                                <option value="Maname">Maname</option>
+                                <option value="Noto Serif Sinhala">Noto Serif Sinhala</option>
+                                <option value="Abhaya Libre">Abhaya Libre</option>
+                            </optgroup>
+                            <optgroup label="English Fonts">
+                                <option value="Outfit">Outfit</option>
+                                <option value="Arial">Arial</option>
+                                <option value="Space Grotesk">Space Grotesk</option>
+                                <option value="Verdana">Verdana</option>
+                                <option value="Tahoma">Tahoma</option>
+                                <option value="Georgia">Georgia</option>
+                                <option value="Roboto">Roboto</option>
+                            </optgroup>
                         </select>
 
                         <select id="fontSize" title="Font size">
@@ -598,6 +637,12 @@ button.download-btn:hover{ transform:translateY(-3px); box-shadow:0 12px 30px rg
                 <div class="file-name-display" id="fileNameDisplay"></div>
             </div>
 
+            <!-- CUSTOM ZIP NAME -->
+            <div class="form-group">
+                <label><i class="fa-solid fa-file-zipper"></i> Custom ZIP File Name</label>
+                <input type="text" id="transZipName" placeholder="e.g. My_Translated_Subs" value="DGSUBZ_Translated_Subtitles">
+            </div>
+
             <button class="convert-btn" id="transBtn" onclick="startTranslation()">
                 <span id="transBtnText">Translate &amp; Apply Styles</span>
                 <div class="spinner" id="transSpinner"></div>
@@ -618,9 +663,9 @@ button.download-btn:hover{ transform:translateY(-3px); box-shadow:0 12px 30px rg
                 <li>Select target language and customize the <b>font, size, style &amp; color</b>.</li>
                 <li>Preview output in the <b>Live Style Preview</b> box.</li>
                 <li>Upload <b>one or multiple</b> subtitle files — 10-20 files at once.</li>
+                <li>Type a <b>Custom ZIP Name</b> if you want a specific file name.</li>
                 <li>Click <b>"Translate &amp; Apply Styles"</b> for batch translation.</li>
-                <li>Every file ends with <b>[ DGSUBZ · dgsubz.vercel.app ]</b> watermark.</li>
-                <li>Click <b>"Download Translated ZIP"</b> to save all files.</li>
+                <li>Every file ends with <b>[ DGSUBZ · dgsubzlk.vercel.app ]</b> watermark.</li>
             </ol>
         </div>
     </section>
@@ -645,14 +690,21 @@ button.download-btn:hover{ transform:translateY(-3px); box-shadow:0 12px 30px rg
                     <label><i class="fa-solid fa-font"></i> Converted Font Style</label>
                     <div class="style-grid">
                         <select id="convFontName" title="Font family">
-                            <option value="Noto Sans Sinhala">Noto Sans Sinhala</option>
-                            <option value="Outfit">Outfit (English)</option>
-                            <option value="Arial">Arial</option>
-                            <option value="Space Grotesk">Space Grotesk</option>
-                            <option value="Verdana">Verdana</option>
-                            <option value="Tahoma">Tahoma</option>
-                            <option value="Georgia">Georgia</option>
-                            <option value="Times New Roman">Times New Roman</option>
+                            <optgroup label="Sinhala Fonts">
+                                <option value="Noto Sans Sinhala">Noto Sans Sinhala</option>
+                                <option value="Maname">Maname</option>
+                                <option value="Noto Serif Sinhala">Noto Serif Sinhala</option>
+                                <option value="Abhaya Libre">Abhaya Libre</option>
+                            </optgroup>
+                            <optgroup label="English Fonts">
+                                <option value="Outfit">Outfit</option>
+                                <option value="Arial">Arial</option>
+                                <option value="Space Grotesk">Space Grotesk</option>
+                                <option value="Verdana">Verdana</option>
+                                <option value="Tahoma">Tahoma</option>
+                                <option value="Georgia">Georgia</option>
+                                <option value="Times New Roman">Times New Roman</option>
+                            </optgroup>
                         </select>
 
                         <select id="convFontSize" title="Font size">
@@ -703,6 +755,12 @@ button.download-btn:hover{ transform:translateY(-3px); box-shadow:0 12px 30px rg
                 <div class="file-list-display" id="fileListDisplay"></div>
             </div>
 
+            <!-- CUSTOM ZIP NAME -->
+            <div class="form-group">
+                <label><i class="fa-solid fa-file-zipper"></i> Custom ZIP File Name</label>
+                <input type="text" id="convZipName" placeholder="e.g. My_Converted_Subs" value="DGSUBZ_Converted_Subtitles">
+            </div>
+
             <button class="convert-btn" id="convBtn" onclick="convertBatchSubtitles()">
                 <span id="convBtnText">Convert Files</span>
                 <div class="spinner" id="convSpinner"></div>
@@ -723,9 +781,9 @@ button.download-btn:hover{ transform:translateY(-3px); box-shadow:0 12px 30px rg
                 <li>Choose your <b>conversion type</b> — VTT→SRT, VTT→ASS, SRT→ASS, or ASS→SRT.</li>
                 <li>Customize the <b>converted subtitle font</b> style.</li>
                 <li>Upload <b>multiple files</b> — 20-30+ files at once.</li>
+                <li>Type a <b>Custom ZIP Name</b> if you want a specific file name.</li>
                 <li>Click <b>"Convert Files"</b> — progress bar shows status.</li>
-                <li>Every file ends with <b>[ DGSUBZ · dgsubz.vercel.app ]</b> watermark.</li>
-                <li>Click <b>"Download Converted ZIP"</b> to save all files.</li>
+                <li>Every file ends with <b>[ DGSUBZ · dgsubzlk.vercel.app ]</b> watermark.</li>
             </ol>
         </div>
     </section>
@@ -742,7 +800,8 @@ button.download-btn:hover{ transform:translateY(-3px); box-shadow:0 12px 30px rg
                 It lets you translate <b>.srt</b>, <b>.vtt</b>, <b>.ass</b> and <b>.ssa</b> subtitle files into
                 multiple languages and convert between all formats — all in one place. Everything runs locally
                 in your browser, so your files are never uploaded anywhere and your privacy is always protected.<br><br>
-                🌐 <b>dgsubz.vercel.app</b> — Sinhala Subtitles Download
+                🌐 <b>dgsubzlk.vercel.app</b> <br>
+                ⬇️ <b>dgsubz.netlify.app</b> — Sinhala Subtitles Download
             </p>
 
             <div class="info-grid">
@@ -776,7 +835,7 @@ button.download-btn:hover{ transform:translateY(-3px); box-shadow:0 12px 30px rg
 </main>
 
 <div class="footer">
-    DGSUBZ · dgsubz.vercel.app · Sinhala Subtitles Download © 2026<br>
+    DGSUBZ · dgsubzlk.vercel.app · Sinhala Subtitles Download © 2026<br>
     Made with <i class="fa-solid fa-heart" style="color:#ff00e5"></i> in Sri Lanka
 </div>
 
@@ -806,12 +865,12 @@ window.addEventListener('load', function(){
     setTimeout(function(){
         const loader = document.getElementById('loaderScreen');
         if(loader) loader.classList.add('hidden');
-    }, 2400);
+    }, 2200);
 });
 setTimeout(function(){
     const loader = document.getElementById('loaderScreen');
     if(loader && !loader.classList.contains('hidden')) loader.classList.add('hidden');
-}, 3800);
+}, 3500);
 
 /* =========================================================
    URL ROUTING (Vercel SPA Fix)
@@ -828,7 +887,7 @@ const PATH_TO_PAGE = {
     '/translate': 'translator',
     '/translator': 'translator',
     '/converter': 'converter',
-    '/conve': 'converter', // Adding this just in case user typed /conve
+    '/conve': 'converter',
     '/convert': 'converter',
     '/about': 'about'
 };
@@ -1163,10 +1222,10 @@ function generateSubtitleByFormat(entries, format, style){
 ========================================================= */
 function addEndWatermark(entries){
     if(!entries || entries.length === 0){
-        return [{ start: 1000, end: 5000, text: '[ DGSUBZ · dgsubz.vercel.app ]', isWatermark: true }];
+        return [{ start: 1000, end: 5000, text: '[ DGSUBZ · dgsubzlk.vercel.app ]', isWatermark: true }];
     }
     const copy = entries.slice(); const lastEnd = copy[copy.length - 1].end || 5000; const start = lastEnd + 200;
-    copy.push({ start, end: start + 4000, text: '[ DGSUBZ · dgsubz.vercel.app ]', isWatermark: true });
+    copy.push({ start, end: start + 4000, text: '[ DGSUBZ · dgsubzlk.vercel.app ]', isWatermark: true });
     return copy;
 }
 
@@ -1179,7 +1238,8 @@ function updateStylePreview(){
     const fontStyle = document.getElementById('fontStyle').value; const fontColor = document.getElementById('fontColor').value || '#00f0ff';
     const isBold = fontStyle === 'bold' || fontStyle === 'bolditalic'; const isItalic = fontStyle === 'italic' || fontStyle === 'bolditalic';
 
-    preview.style.fontFamily = `'${fontName}', sans-serif`; preview.style.fontSize = Math.max(12, Math.round(fontSize * 0.85)) + 'px';
+    preview.style.fontFamily = `'${fontName}', 'Noto Sans Sinhala', sans-serif`; 
+    preview.style.fontSize = Math.max(12, Math.round(fontSize * 0.85)) + 'px';
     preview.style.color = fontColor; preview.style.fontWeight = isBold ? '800' : '600'; preview.style.fontStyle = isItalic ? 'italic' : 'normal';
 }
 function updateConvStylePreview(){
@@ -1188,7 +1248,8 @@ function updateConvStylePreview(){
     const fontStyle = document.getElementById('convFontStyle').value; const fontColor = document.getElementById('convFontColor').value || '#00f0ff';
     const isBold = fontStyle === 'bold' || fontStyle === 'bolditalic'; const isItalic = fontStyle === 'italic' || fontStyle === 'bolditalic';
 
-    preview.style.fontFamily = `'${fontName}', sans-serif`; preview.style.fontSize = Math.max(12, Math.round(fontSize * 0.85)) + 'px';
+    preview.style.fontFamily = `'${fontName}', 'Noto Sans Sinhala', sans-serif`; 
+    preview.style.fontSize = Math.max(12, Math.round(fontSize * 0.85)) + 'px';
     preview.style.color = fontColor; preview.style.fontWeight = isBold ? '800' : '600'; preview.style.fontStyle = isItalic ? 'italic' : 'normal';
 }
 
@@ -1263,8 +1324,16 @@ async function convertBatchSubtitles(){
 }
 function downloadConvertedZip(){
     if(!convertedZipBlob){ toast("Please convert files first.", "error"); return; }
-    const type = document.getElementById('convertType').value; const conv = CONVERSION_MAP[type] || CONVERSION_MAP['vtt_to_srt'];
-    const link = document.createElement('a'); link.href = URL.createObjectURL(convertedZipBlob); link.download = `DGSUBZ_${conv.source.toUpperCase()}_to_${conv.target.toUpperCase()}.zip`;
+    
+    // Custom ZIP Name
+    let customName = document.getElementById('convZipName').value.trim();
+    if(!customName) {
+        const type = document.getElementById('convertType').value; const conv = CONVERSION_MAP[type] || CONVERSION_MAP['vtt_to_srt'];
+        customName = `DGSUBZ_${conv.source.toUpperCase()}_to_${conv.target.toUpperCase()}`;
+    }
+    if(!customName.toLowerCase().endsWith('.zip')) customName += '.zip';
+
+    const link = document.createElement('a'); link.href = URL.createObjectURL(convertedZipBlob); link.download = customName;
     document.body.appendChild(link); link.click(); document.body.removeChild(link); setTimeout(()=> URL.revokeObjectURL(link.href), 5000); toast("ZIP downloaded ✅", "success");
 }
 
@@ -1389,7 +1458,13 @@ async function startTranslation(){
 }
 function downloadTranslatedFile(){
     if(!finalTranslatedZipBlob){ toast("Nothing to download yet.", "error"); return; }
-    const link = document.createElement('a'); link.href = URL.createObjectURL(finalTranslatedZipBlob); link.download = "DGSUBZ_Translated_Subtitles.zip";
+    
+    // Custom ZIP Name
+    let customName = document.getElementById('transZipName').value.trim();
+    if(!customName) customName = "DGSUBZ_Translated_Subtitles";
+    if(!customName.toLowerCase().endsWith('.zip')) customName += '.zip';
+
+    const link = document.createElement('a'); link.href = URL.createObjectURL(finalTranslatedZipBlob); link.download = customName;
     document.body.appendChild(link); link.click(); document.body.removeChild(link); setTimeout(()=> URL.revokeObjectURL(link.href), 5000); toast("ZIP downloaded ✅", "success");
 }
 
@@ -1410,4 +1485,4 @@ document.addEventListener('DOMContentLoaded', function(){
 </script>
 
 </body>
-</html>
+                        </html>
