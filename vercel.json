@@ -1,0 +1,21 @@
+{
+  "version": 2,
+  "cleanUrls": true,
+  "trailingSlash": false,
+  "rewrites": [
+    { "source": "/translate", "destination": "/index.html" },
+    { "source": "/translator", "destination": "/index.html" },
+    { "source": "/converter", "destination": "/index.html" },
+    { "source": "/convert", "destination": "/index.html" },
+    { "source": "/about", "destination": "/index.html" },
+    { "source": "/home", "destination": "/index.html" }
+  ],
+  "headers": [
+    {
+      "source": "/index.html",
+      "headers": [
+        { "key": "Cache-Control", "value": "public, max-age=0, must-revalidate" }
+      ]
+    }
+  ]
+}
