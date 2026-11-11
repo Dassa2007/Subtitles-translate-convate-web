@@ -1002,7 +1002,6 @@ function readFileAsync(file){
     });
 }
 
-// ZIP ෆයිල් එකක් ආවම ඒක ඇතුලේ තියෙන ෆයිල්ස් වෙන් කරගන්න ෆන්ක්ෂන් එක
 async function processInputFiles(fileList, allowedExtensions) {
     let result = [];
     for(let i = 0; i < fileList.length; i++) {
@@ -1015,7 +1014,7 @@ async function processInputFiles(fileList, allowedExtensions) {
                     const ext = (relativePath.split('.').pop() || '').toLowerCase();
                     if(allowedExtensions.includes(ext)) {
                         const content = await zipEntry.async("text");
-                        result.push({ name: relativePath, content: content, ext: ext });
+                        result.push({ name: relativePath.split('/').pop(), content: content, ext: ext });
                     }
                 }
             } catch(e) {
@@ -1047,7 +1046,7 @@ function pad(num, len){ return String(num).padStart(len, '0'); }
 function stripHtmlTags(text){ return String(text || '').replace(/<[^>]+>/g, ''); }
 
 /* =========================================================
-   TIME CONVERSION
+   TIME CONVERSION (FIXED)
 ========================================================= */
 function parseTimeToMs(str){
     str = String(str || '').trim();
@@ -1090,7 +1089,7 @@ function detectFormat(filename){
 }
 
 /* =========================================================
-   PARSERS
+   PARSERS (BUG FIXED: .trim() added to split times)
 ========================================================= */
 function parseSRT(content){
     const lines = content.replace(/\r\n/g, '\n').split('\n');
@@ -1101,7 +1100,7 @@ function parseSRT(content){
         if(line.includes('-->')){
             const parts = line.split('-->');
             const start = parseTimeToMs(parts[0]);
-            const end = parseTimeToMs(parts[1].split(' ')[0]);
+            const end = parseTimeToMs(parts[1].trim().split(' ')[0]); // FIX APPLIED HERE
             const textLines = [];
             i++;
             while(i < lines.length && lines[i].trim() !== ''){ textLines.push(lines[i].trim()); i++; }
@@ -1148,7 +1147,7 @@ function parseASS(content){
             }
             parts.push(cur);
             if(parts.length >= textIndex + 1){
-                const start = parseTimeToMs(parts[1]); const end = parseTimeToMs(parts[2]);
+                const start = parseTimeToMs(parts[1].trim()); const end = parseTimeToMs(parts[2].trim());
                 let text = parts[textIndex]; text = text.replace(/\{[^}]*\}/g, ''); text = text.replace(/\\N/gi, '\n').replace(/\\n/gi, '\n');
                 entries.push({ start, end, text: text.trim() });
             }
@@ -1241,14 +1240,20 @@ function generateSubtitleByFormat(entries, format, style){
 }
 
 /* =========================================================
-   WATERMARK AT END
+   WATERMARK AT END (BUG FIXED: Safe Max End check)
 ========================================================= */
 function addEndWatermark(entries){
     if(!entries || entries.length === 0){
         return [{ start: 1000, end: 5000, text: '[ DGSUBZ · dgsubzlk.vercel.app ]', isWatermark: true }];
     }
-    const copy = entries.slice(); const lastEnd = copy[copy.length - 1].end || 5000; const start = lastEnd + 200;
-    copy.push({ start, end: start + 4000, text: '[ DGSUBZ · dgsubzlk.vercel.app ]', isWatermark: true });
+    // Safe check to find the exact max end time
+    let maxEnd = 5000;
+    for (const e of entries) {
+        if (e.end > maxEnd) maxEnd = e.end;
+    }
+    const start = maxEnd + 200;
+    const copy = entries.slice();
+    copy.push({ start: start, end: start + 4000, text: '[ DGSUBZ · dgsubzlk.vercel.app ]', isWatermark: true });
     return copy;
 }
 
@@ -1289,7 +1294,6 @@ const CONVERSION_MAP = {
 
 function updateConverterAccept(){
     const type = document.getElementById('convertType').value; const conv = CONVERSION_MAP[type] || CONVERSION_MAP['srt_to_srt'];
-    // .zip එකතු කරනවා
     document.getElementById('subFiles').setAttribute('accept', `.${conv.source},.zip`); 
     document.getElementById('srcFormatLabel').textContent = conv.label;
     document.getElementById('srcExtHint').textContent = `.${conv.source}, .zip`; 
@@ -1320,7 +1324,6 @@ async function convertBatchSubtitles(){
     downloadBtn.classList.remove('show'); progressWrap.classList.add('show'); progressBar.style.width = "0%"; convertedZipBlob = null;
 
     try {
-        // ZIP ඇතුලේ තියෙන අදාල ෆෝමැට් එකේ ෆයිල්ස් විතරක් ගන්නවා
         const allFiles = Array.from(fileInput.files);
         const validFiles = await processInputFiles(allFiles, [sourceFormat]);
 
@@ -1345,7 +1348,6 @@ async function convertBatchSubtitles(){
                 entries = addEndWatermark(entries); 
                 const convertedText = generateSubtitleByFormat(entries, targetFormat, style);
                 
-                // ෆයිල් නම හදාගන්නවා
                 const baseName = fileData.name.replace(/\.[^.]+$/, ''); 
                 zip.file(baseName + '_DG.' + targetFormat, convertedText);
             } catch(fileErr){ console.error("Convert failed:", fileData.name, fileErr); failures.push(fileData.name); }
@@ -1462,7 +1464,6 @@ async function startTranslation(){
     const style = { fontName, fontSize, fontColorHex, isBold, isItalic, applyStyle: true };
 
     try{
-        // ZIP එක ඇතුලේ තියෙන සබ් ෆයිල්ස් ඔක්කොම අරගන්නවා
         const allFiles = Array.from(fileInput.files);
         const validFiles = await processInputFiles(allFiles, ['srt', 'vtt', 'ass', 'ssa']);
 
